@@ -1,0 +1,16 @@
+-- seed.sql
+--
+-- This project's primary data source is the synthetic generator
+-- (src/data_generator.py / scripts/generate_data.py), which produces
+-- realistic, causally-structured event data directly into the
+-- sessions/events/journeys tables. This file is intentionally left as a
+-- placeholder for teams that later want to seed a small fixed reference
+-- dataset (e.g. for a fixed demo snapshot) instead of regenerating
+-- synthetic data on every run.
+--
+-- Example pattern once you have anonymized real data to seed with:
+--
+-- INSERT INTO sessions (session_id, anonymous_user_id, session_start, session_end,
+--                        device_type, platform, acquisition_source, intervention_exposure)
+-- VALUES ('session_0001AB', 'user_00A1CD', '2026-01-01 10:00:00+00', '2026-01-01 10:04:00+00',
+--         'desktop', 'web', 'organic_search', false);

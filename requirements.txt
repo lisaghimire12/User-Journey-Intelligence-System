@@ -1,0 +1,34 @@
+# Dashboard
+streamlit>=1.36,<2.0
+
+# Database
+SQLAlchemy>=2.0,<3.0
+psycopg2-binary>=2.9,<3.0
+
+# Data processing
+pandas>=2.1,<3.0
+polars>=0.20,<1.5
+numpy>=1.26,<2.1
+
+# Visualization
+plotly>=5.20,<6.0
+
+# Causal inference
+dowhy>=0.11,<0.15
+
+# Simulation
+simpy>=4.1,<5.0
+
+# Machine learning / statistics
+scikit-learn>=1.4,<1.6
+scipy>=1.11,<1.14
+statsmodels>=0.14,<0.15
+
+# Configuration
+python-dotenv>=1.0,<2.0
+
+# Optional LLM (only used for plain-language summaries; system works without it)
+anthropic>=0.30,<1.0
+
+# Testing
+pytest>=8.0,<9.0
