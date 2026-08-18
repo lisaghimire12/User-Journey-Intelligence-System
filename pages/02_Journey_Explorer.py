@@ -25,6 +25,151 @@ from src.ui_theme import (
 
 
 # ============================================================
+# COLOR PALETTE
+# ============================================================
+
+ESPRESSO = "#32180F"
+TERRACOTTA = "#9B3F24"
+RUST = "#A84A2A"
+CREAM = "#F7F1E8"
+OFFWHITE = "#FCFAF6"
+TAUPE = "#D8CFC3"
+SAND = "#E9DED1"
+WHITE = "#FFFFFF"
+
+
+# ============================================================
+# PAGE-SPECIFIC COLOR STYLING
+# ============================================================
+
+st.markdown(
+    f"""
+    <style>
+
+    /* ========================================================
+       GENERAL TEXT
+       ======================================================== */
+
+    .stMarkdown p {{
+        color: {ESPRESSO} !important;
+        opacity: 1 !important;
+    }}
+
+    .stMarkdown li {{
+        color: {ESPRESSO} !important;
+        opacity: 1 !important;
+    }}
+
+    .stMarkdown strong {{
+        color: {ESPRESSO} !important;
+    }}
+
+    /* ========================================================
+       HEADINGS
+       ======================================================== */
+
+    h3 {{
+        color: {ESPRESSO} !important;
+        opacity: 1 !important;
+    }}
+
+    h4 {{
+        color: {ESPRESSO} !important;
+        opacity: 1 !important;
+    }}
+
+    /* ========================================================
+       SIDEBAR
+       ======================================================== */
+
+    section[data-testid="stSidebar"] {{
+        background-color: {CREAM} !important;
+    }}
+
+    section[data-testid="stSidebar"] * {{
+        color: {ESPRESSO} !important;
+    }}
+
+    section[data-testid="stSidebar"] label {{
+        color: {ESPRESSO} !important;
+        opacity: 1 !important;
+    }}
+
+    section[data-testid="stSidebar"] p {{
+        color: {ESPRESSO} !important;
+        opacity: 1 !important;
+    }}
+
+    /* ========================================================
+       CAPTIONS
+       ======================================================== */
+
+    div[data-testid="stCaptionContainer"] {{
+        color: {ESPRESSO} !important;
+        opacity: 1 !important;
+    }}
+
+    div[data-testid="stCaptionContainer"] p {{
+        color: {ESPRESSO} !important;
+        opacity: 1 !important;
+    }}
+
+    /* ========================================================
+       INFO BOXES
+       ======================================================== */
+
+    div[data-testid="stAlert"] {{
+        color: {ESPRESSO} !important;
+    }}
+
+    div[data-testid="stAlert"] p {{
+        color: {ESPRESSO} !important;
+        opacity: 1 !important;
+    }}
+
+    /* ========================================================
+       DATAFRAME
+       ======================================================== */
+
+    div[data-testid="stDataFrame"] {{
+        border: 1px solid {TAUPE} !important;
+    }}
+
+    /* ========================================================
+       RADIO BUTTONS
+       ======================================================== */
+
+    div[data-testid="stRadio"] label {{
+        color: {ESPRESSO} !important;
+    }}
+
+    div[data-testid="stRadio"] p {{
+        color: {ESPRESSO} !important;
+    }}
+
+    /* ========================================================
+       MULTISELECT
+       ======================================================== */
+
+    div[data-testid="stMultiSelect"] label {{
+        color: {ESPRESSO} !important;
+    }}
+
+    /* ========================================================
+       DIVIDERS
+       ======================================================== */
+
+    hr {{
+        border-color: {TAUPE} !important;
+    }}
+
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+# ============================================================
 # PAGE HEADER
 # ============================================================
 
@@ -124,15 +269,6 @@ filtered_journeys = journeys[
 
 # ============================================================
 # FILTER RAW EVENTS
-#
-# THIS IS THE IMPORTANT FIX.
-#
-# Previously the Sankey was always using the original
-# `transitions` dataframe, so changing the sidebar filters
-# did not change the Sankey.
-#
-# Now we take only the events belonging to the filtered
-# sessions and rebuild the transition matrix.
 # ============================================================
 
 filtered_transitions = pd.DataFrame(
@@ -141,17 +277,14 @@ filtered_transitions = pd.DataFrame(
 
 if not filtered_sessions.empty:
 
-    # Get the session IDs that survived the filters
     filtered_session_ids = set(
         filtered_sessions["session_id"]
     )
 
-    # Load raw events from the database
     raw_events = load_raw_events()
 
     if not raw_events.empty:
 
-        # Keep only events belonging to filtered sessions
         filtered_events = raw_events[
             raw_events["session_id"].isin(
                 filtered_session_ids
@@ -160,14 +293,10 @@ if not filtered_sessions.empty:
 
         if not filtered_events.empty:
 
-            # Clean/type-normalize events using the existing
-            # project preprocessing function
             filtered_events_pl = clean_events(
                 filtered_events
             )
 
-            # Rebuild the transition matrix ONLY from the
-            # filtered events
             filtered_transitions = compute_transition_matrix(
                 filtered_events_pl
             )
@@ -193,10 +322,8 @@ st.markdown("### Major transition flow (Sankey)")
 
 if not filtered_transitions.empty:
 
-    # Take the 25 most common transitions AFTER filtering
     top_edges = filtered_transitions.head(25)
 
-    # Get unique page names
     nodes = list(
         pd.unique(
             top_edges[
@@ -205,13 +332,11 @@ if not filtered_transitions.empty:
         )
     )
 
-    # Map each node to a numeric index
     node_index = {
         node: index
         for index, node in enumerate(nodes)
     }
 
-    # Create Sankey diagram
     fig = go.Figure(
         data=[
             go.Sankey(
@@ -220,9 +345,12 @@ if not filtered_transitions.empty:
                     pad=16,
                     thickness=16,
                     label=nodes,
-                    color="#9B3F24",
+
+                    # Palette
+                    color=TERRACOTTA,
+
                     line=dict(
-                        color="#D8CFC3",
+                        color=TAUPE,
                         width=0.5,
                     ),
                 ),
@@ -240,15 +368,36 @@ if not filtered_transitions.empty:
 
                     value=top_edges["count"],
 
+                    # Transparent Terracotta
                     color="rgba(155,63,36,0.25)",
                 ),
             )
         ]
     )
 
+    # --------------------------------------------------------
+    # Plotly layout
+    #
+    # IMPORTANT:
+    # We modify the existing layout dictionary rather than
+    # passing duplicate font arguments.
+    # --------------------------------------------------------
+
+    sankey_layout = plotly_layout_defaults()
+
+    sankey_layout["font"] = dict(
+        family="Inter, sans-serif",
+        color=ESPRESSO,
+        size=12,
+    )
+
+    sankey_layout["paper_bgcolor"] = OFFWHITE
+    sankey_layout["plot_bgcolor"] = OFFWHITE
+
+    sankey_layout["height"] = 420
+
     fig.update_layout(
-        **plotly_layout_defaults(),
-        height=420,
+        **sankey_layout
     )
 
     st.plotly_chart(
@@ -321,8 +470,73 @@ with col2:
             },
         )
 
+        # ----------------------------------------------------
+        # Histogram color
+        # ----------------------------------------------------
+
+        fig2.update_traces(
+            marker=dict(
+                color=RUST,
+                line=dict(
+                    color=TAUPE,
+                    width=0.5,
+                ),
+            )
+        )
+
+        # ----------------------------------------------------
+        # Plotly layout
+        # ----------------------------------------------------
+
+        histogram_layout = plotly_layout_defaults()
+
+        histogram_layout["font"] = dict(
+            family="Inter, sans-serif",
+            color=ESPRESSO,
+            size=12,
+        )
+
+        histogram_layout["paper_bgcolor"] = OFFWHITE
+        histogram_layout["plot_bgcolor"] = OFFWHITE
+
+        histogram_layout["xaxis"] = dict(
+            title=dict(
+                text="Pages per journey",
+                font=dict(
+                    color=ESPRESSO,
+                    size=14,
+                ),
+            ),
+            tickfont=dict(
+                color=ESPRESSO,
+                size=12,
+            ),
+            color=ESPRESSO,
+            showline=True,
+            linecolor=TAUPE,
+            gridcolor=TAUPE,
+        )
+
+        histogram_layout["yaxis"] = dict(
+            title=dict(
+                text="Count",
+                font=dict(
+                    color=ESPRESSO,
+                    size=14,
+                ),
+            ),
+            tickfont=dict(
+                color=ESPRESSO,
+                size=12,
+            ),
+            color=ESPRESSO,
+            showline=True,
+            linecolor=TAUPE,
+            gridcolor=TAUPE,
+        )
+
         fig2.update_layout(
-            **plotly_layout_defaults()
+            **histogram_layout
         )
 
         st.plotly_chart(
@@ -347,6 +561,7 @@ dropoff = dropoff_by_stage(
     filtered_journeys
 )
 
+
 if not dropoff.empty:
 
     fig3 = px.bar(
@@ -356,13 +571,76 @@ if not dropoff.empty:
         text="share_pct",
     )
 
+    # --------------------------------------------------------
+    # Bar styling
+    # --------------------------------------------------------
+
     fig3.update_traces(
         texttemplate="%{text}%",
         textposition="outside",
+
+        marker=dict(
+            color=TERRACOTTA,
+        ),
+
+        textfont=dict(
+            color=ESPRESSO,
+        ),
+    )
+
+    # --------------------------------------------------------
+    # Plotly layout
+    # --------------------------------------------------------
+
+    dropoff_layout = plotly_layout_defaults()
+
+    dropoff_layout["font"] = dict(
+        family="Inter, sans-serif",
+        color=ESPRESSO,
+        size=12,
+    )
+
+    dropoff_layout["paper_bgcolor"] = OFFWHITE
+    dropoff_layout["plot_bgcolor"] = OFFWHITE
+
+    dropoff_layout["xaxis"] = dict(
+        title=dict(
+            text="Stage",
+            font=dict(
+                color=ESPRESSO,
+                size=14,
+            ),
+        ),
+        tickfont=dict(
+            color=ESPRESSO,
+            size=12,
+        ),
+        color=ESPRESSO,
+        showline=True,
+        linecolor=TAUPE,
+        gridcolor=TAUPE,
+    )
+
+    dropoff_layout["yaxis"] = dict(
+        title=dict(
+            text="Sessions",
+            font=dict(
+                color=ESPRESSO,
+                size=14,
+            ),
+        ),
+        tickfont=dict(
+            color=ESPRESSO,
+            size=12,
+        ),
+        color=ESPRESSO,
+        showline=True,
+        linecolor=TAUPE,
+        gridcolor=TAUPE,
     )
 
     fig3.update_layout(
-        **plotly_layout_defaults()
+        **dropoff_layout
     )
 
     st.plotly_chart(
