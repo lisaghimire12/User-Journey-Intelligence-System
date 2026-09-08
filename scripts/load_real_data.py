@@ -48,6 +48,7 @@ import pandas as pd
 from sqlalchemy import text
 
 from src import database
+from src.event_mapping import map_live_event
 
 # Exact input file this loader is written for (overridable via --file).
 REAL_DATA_PATH = "data/external/bq-results-20260818-140307-1787061830701.csv"
@@ -69,21 +70,6 @@ DEFAULT_PAGE_DELAY = 5.0
 # a cap, a single long idle stretch inside a session would silently distort
 # every downstream simulation that consumes page_delay.
 MAX_PAGE_DELAY_SECONDS = 30.0
-
-# Funnel mapping: GA4 event_name -> (page, action, event_type).
-# event_type follows the convention used in src/data_generator.py:
-#   event_type = "page_view" if action == "view" else action
-# so page_view/view_item/begin_checkout (action "view") are all stored as
-# "page_view", while add_to_cart and purchase keep their own event types.
-# page_view's page is resolved below (Home vs Search) from the URL.
-EVENT_MAP = {
-    "page_view":      {"page": "Search",  "action": "view",        "event_type": "page_view"},
-    "view_item":      {"page": "Product", "action": "view",        "event_type": "page_view"},
-    "add_to_cart":    {"page": "Cart",    "action": "add_to_cart", "event_type": "add_to_cart"},
-    "begin_checkout": {"page": "Checkout", "action": "view",       "event_type": "page_view"},
-    "purchase":       {"page": "Purchase", "action": "purchase",   "event_type": "purchase"},
-}
-
 
 def _truncate_data_tables() -> None:
     """Clears only the load-and-reconstruct tables.
@@ -125,7 +111,7 @@ def _split_sessions(events: pd.DataFrame) -> list[list[pd.Series]]:
 
 def _map_funnel(event: pd.Series) -> dict:
     """Maps one GA4 event onto the schema's page/action/event_type model."""
-    meta = EVENT_MAP[event["event_name"]]
+    meta = map_live_event(event["event_name"])
     page = meta["page"]
     # page_view => "Search" when the URL looks like a search page
     # (Google Merchandise Store uses /asearch.html); otherwise "Home".

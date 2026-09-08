@@ -58,6 +58,9 @@ class Settings:
     pseudonymization_salt: str = field(
         default_factory=lambda: os.getenv("PSEUDONYMIZATION_SALT", "change-me-in-.env")
     )
+    allowed_origins: str = field(
+        default_factory=lambda: os.getenv("ALLOWED_ORIGINS", "http://localhost:3000")
+    )
 
     # --- Optional LLM ----------------------------------------------------
     # The system is fully functional without this. It is only used, when
