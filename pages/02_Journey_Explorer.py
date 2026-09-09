@@ -200,6 +200,203 @@ sessions_pd, journeys, merged, transitions = load_pipeline_data()
 
 
 # ============================================================
+# LIVE CLOZET SESSION
+# ============================================================
+
+st.markdown("### 🔴 Live Clozet Session")
+
+try:
+    live_events = load_raw_events()
+
+    if live_events is not None and not live_events.empty:
+
+        # Normalize timestamp column for sorting.
+        if "timestamp" in live_events.columns:
+            live_events["timestamp"] = pd.to_datetime(
+                live_events["timestamp"],
+                errors="coerce",
+            )
+
+        # Find the most recently active session.
+        if "timestamp" in live_events.columns:
+            latest_event = live_events.sort_values(
+                "timestamp"
+            ).iloc[-1]
+
+            live_session_id = latest_event.get(
+                "session_id"
+            )
+
+            if pd.notna(live_session_id):
+
+                session_events = live_events[
+                    live_events["session_id"] == live_session_id
+                ].copy()
+
+                if "timestamp" in session_events.columns:
+                    session_events = session_events.sort_values(
+                        "timestamp"
+                    )
+
+                # Keep only the most recent session's events.
+                if len(session_events) > 0:
+
+                    last_event = session_events.iloc[-1]
+
+                    event_column = (
+                        "event_name"
+                        if "event_name" in session_events.columns
+                        else (
+                            "event_type"
+                            if "event_type" in session_events.columns
+                            else None
+                        )
+                    )
+
+                    page_column = (
+                        "page_url"
+                        if "page_url" in session_events.columns
+                        else (
+                            "page"
+                            if "page" in session_events.columns
+                            else None
+                        )
+                    )
+
+                    last_event_name = (
+                        str(last_event[event_column])
+                        if event_column
+                        and pd.notna(last_event[event_column])
+                        else "Unknown"
+                    )
+
+                    last_page = (
+                        str(last_event[page_column])
+                        if page_column
+                        and pd.notna(last_event[page_column])
+                        else "Unknown"
+                    )
+
+                    event_count = len(session_events)
+
+                    # Mask most of the identifier for privacy.
+                    session_text = str(live_session_id)
+
+                    if len(session_text) > 12:
+                        display_session = (
+                            session_text[:6]
+                            + "••••"
+                            + session_text[-4:]
+                        )
+                    else:
+                        display_session = session_text
+
+                    c1, c2, c3, c4 = st.columns(4)
+
+                    c1.metric(
+                        "Anonymous session",
+                        display_session,
+                    )
+
+                    c2.metric(
+                        "Events received",
+                        f"{event_count:,}",
+                    )
+
+                    c3.metric(
+                        "Last event",
+                        last_event_name,
+                    )
+
+                    c4.metric(
+                        "Last page",
+                        last_page,
+                    )
+
+                    st.markdown(
+                        "**Live journey path**"
+                    )
+
+                    journey_rows = []
+
+                    for index, (_, event) in enumerate(
+                        session_events.iterrows(),
+                        start=1,
+                    ):
+
+                        event_name = (
+                            str(event[event_column])
+                            if event_column
+                            and pd.notna(event[event_column])
+                            else "event"
+                        )
+
+                        page = (
+                            str(event[page_column])
+                            if page_column
+                            and pd.notna(event[page_column])
+                            else "unknown"
+                        )
+
+                        journey_rows.append(
+                            {
+                                "Step": index,
+                                "Event": event_name,
+                                "Page": page,
+                                "Time": (
+                                    event["timestamp"]
+                                    if "timestamp" in event
+                                    else ""
+                                ),
+                            }
+                        )
+
+                    live_journey_df = pd.DataFrame(
+                        journey_rows
+                    )
+
+                    st.dataframe(
+                        live_journey_df,
+                        width="stretch",
+                        hide_index=True,
+                    )
+
+                    st.caption(
+                        "This is the most recently active anonymous "
+                        "session received from the live Clozet frontend. "
+                        "No name, email, phone number, or other direct "
+                        "identifier is displayed."
+                    )
+
+                else:
+                    st.info(
+                        "Live events exist, but no active session could be reconstructed."
+                    )
+
+            else:
+                st.info(
+                    "Live events exist, but no session identifier was found."
+                )
+
+        else:
+            st.info(
+                "No timestamp field is available for live-session tracking."
+            )
+
+    else:
+        st.info(
+            "No live Clozet events have been received yet."
+        )
+
+except Exception as exc:
+    st.warning(
+        f"Live session view unavailable: {exc}"
+    )
+
+
+st.divider()
+
+# ============================================================
 # SIDEBAR FILTERS
 # ============================================================
 

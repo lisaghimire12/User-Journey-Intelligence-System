@@ -5,6 +5,12 @@ import streamlit as st
 from src import database
 from src.config import settings
 from src.pipeline_state import clear_all_caches
+from src.data_processing import clean_events, clean_sessions
+from src.journey_reconstruction import reconstruct_journeys
+from src.behavioral_analysis import compute_kpis
+from src import causal_analysis
+from src.recommendation_engine import build_recommendations
+from src.explanation_engine import build_explanation
 from src.ui_theme import page_header, project_footer
 
 
@@ -41,10 +47,6 @@ st.markdown(
     f"""
     <style>
 
-    /* ========================================================
-       GENERAL TEXT
-       ======================================================== */
-
     .stMarkdown p {{
         color: {ESPRESSO} !important;
         opacity: 1 !important;
@@ -59,10 +61,6 @@ st.markdown(
         color: {ESPRESSO} !important;
     }}
 
-    /* ========================================================
-       SECTION HEADINGS
-       ======================================================== */
-
     h3 {{
         color: {ESPRESSO} !important;
         opacity: 1 !important;
@@ -72,10 +70,6 @@ st.markdown(
         color: {ESPRESSO} !important;
         opacity: 1 !important;
     }}
-
-    /* ========================================================
-       NORMAL CARDS
-       ======================================================== */
 
     .card {{
         background-color: {OFFWHITE} !important;
@@ -92,10 +86,6 @@ st.markdown(
         opacity: 1 !important;
     }}
 
-    /* ========================================================
-       METRIC LABELS
-       ======================================================== */
-
     div[data-testid="stMetricLabel"] {{
         color: {ESPRESSO} !important;
         opacity: 1 !important;
@@ -106,10 +96,6 @@ st.markdown(
         opacity: 1 !important;
     }}
 
-    /* ========================================================
-       METRIC VALUES
-       ======================================================== */
-
     div[data-testid="stMetricValue"] {{
         color: {TERRACOTTA} !important;
         opacity: 1 !important;
@@ -119,10 +105,6 @@ st.markdown(
         color: {TERRACOTTA} !important;
     }}
 
-    /* ========================================================
-       METRIC DELTAS
-       ======================================================== */
-
     div[data-testid="stMetricDelta"] {{
         color: {RUST} !important;
         opacity: 1 !important;
@@ -131,10 +113,6 @@ st.markdown(
     div[data-testid="stMetricDelta"] svg {{
         fill: {RUST} !important;
     }}
-
-    /* ========================================================
-       CAPTIONS
-       ======================================================== */
 
     div[data-testid="stCaptionContainer"] {{
         color: {ESPRESSO} !important;
@@ -146,10 +124,6 @@ st.markdown(
         opacity: 1 !important;
     }}
 
-    /* ========================================================
-       STATUS / INFO BOXES
-       ======================================================== */
-
     div[data-testid="stAlert"] {{
         color: {ESPRESSO} !important;
     }}
@@ -159,17 +133,9 @@ st.markdown(
         opacity: 1 !important;
     }}
 
-    /* ========================================================
-       ERROR MESSAGE TEXT
-       ======================================================== */
-
     div[data-testid="stException"] {{
         color: {ESPRESSO} !important;
     }}
-
-    /* ========================================================
-       BUTTON
-       ======================================================== */
 
     div.stButton > button {{
         background-color: {TERRACOTTA} !important;
@@ -189,10 +155,6 @@ st.markdown(
         box-shadow: 0 0 0 2px {SAND} !important;
     }}
 
-    /* ========================================================
-       DIVIDERS
-       ======================================================== */
-
     hr {{
         border-color: {TAUPE} !important;
     }}
@@ -201,6 +163,113 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+
+# ============================================================
+# RECOMPUTE PIPELINE
+# ============================================================
+
+def recompute_pipeline():
+    """
+    Re-run the analytics pipeline against the current database contents.
+
+    This intentionally does NOT regenerate synthetic data.
+    It processes whatever events and sessions currently exist.
+    """
+
+    raw_events = database.read_table("events")
+    raw_sessions = database.read_table("sessions")
+
+    if raw_events.empty:
+        raise RuntimeError(
+            "No events found in the database. "
+            "Load event data before recomputing the pipeline."
+        )
+
+    events_pl = clean_events(raw_events)
+    sessions_pl = clean_sessions(raw_sessions)
+
+    reconstructed = reconstruct_journeys(events_pl)
+
+    sessions_pd = sessions_pl.to_pandas()
+
+    kpis = compute_kpis(
+        reconstructed,
+        sessions_pd,
+    )
+
+    # --------------------------------------------------------
+    # Causal analysis
+    # --------------------------------------------------------
+
+    causal_df = reconstructed.merge(
+        sessions_pd,
+        on="session_id",
+        how="left",
+    )
+
+    causal_results = []
+
+    for question in causal_analysis.CAUSAL_QUESTIONS:
+
+        result = causal_analysis.estimate_effect(
+            causal_df,
+            question["treatment_raw"],
+            question["outcome"],
+            question["confounders"],
+            treatment_label=question["treatment_label"],
+            beneficial_direction=question.get(
+                "beneficial_direction",
+                "low",
+            ),
+        )
+
+        causal_results.append(result)
+
+    # --------------------------------------------------------
+    # Recommendations
+    # --------------------------------------------------------
+
+    recommendations = build_recommendations(
+        reconstructed,
+        sessions_pd,
+        kpis["conversion_rate"],
+    )
+
+    records = []
+
+    for recommendation in recommendations:
+
+        explanation = build_explanation(
+            recommendation
+        )
+
+        records.append(
+            {
+                "intervention": recommendation.label,
+                "expected_benefit": (
+                    recommendation.causal_effect_pct
+                    or recommendation.simulated_improvement_pct
+                    or 0.0
+                ),
+                "evidence": recommendation.evidence,
+                "confidence": recommendation.confidence,
+                "complexity": recommendation.complexity,
+                "risk": recommendation.risk,
+                "recommendation_score": recommendation.recommendation_score,
+                "explanation": explanation,
+            }
+        )
+
+    if records:
+        database.write_recommendations(records)
+
+    return {
+        "sessions": kpis["total_sessions"],
+        "conversion_rate": kpis["conversion_rate"],
+        "recommendations": len(recommendations),
+        "causal_results": len(causal_results),
+    }
 
 
 # ============================================================
@@ -225,7 +294,9 @@ with col1:
     except Exception as exc:
         connected = False
         counts = {}
-        st.error(f"Database connection failed: {exc}")
+        st.error(
+            f"Database connection failed: {exc}"
+        )
 
     if connected:
 
@@ -300,7 +371,49 @@ with col2:
         """
     )
 
-    if st.button("Refresh now"):
+    # --------------------------------------------------------
+    # RECOMPUTE
+    # --------------------------------------------------------
+
+    if st.button(
+        "Recompute Now",
+        use_container_width=True,
+    ):
+
+        with st.spinner(
+            "Recomputing journeys, behavioral analytics, causal analysis, and recommendations..."
+        ):
+
+            try:
+
+                results = recompute_pipeline()
+
+                clear_all_caches()
+
+                st.success(
+                    "Pipeline recomputed successfully."
+                )
+
+                st.info(
+                    f"Processed {results['sessions']:,} sessions · "
+                    f"Conversion: {results['conversion_rate']}% · "
+                    f"{results['recommendations']} recommendations generated."
+                )
+
+            except Exception as exc:
+
+                st.error(
+                    f"Pipeline recomputation failed: {exc}"
+                )
+
+    # --------------------------------------------------------
+    # REFRESH
+    # --------------------------------------------------------
+
+    if st.button(
+        "Refresh now",
+        use_container_width=True,
+    ):
         clear_all_caches()
         st.rerun()
 
@@ -308,7 +421,8 @@ with col2:
         f"Auto-refresh is "
         f"{'enabled' if settings.auto_refresh_enabled else 'disabled'} "
         f"(cache TTL: {settings.cache_ttl_seconds}s). "
-        f"Use this button for an immediate refresh."
+        f"Use Recompute Now to re-run analysis against the current "
+        f"database contents."
     )
 
 
@@ -319,14 +433,17 @@ with col2:
 st.markdown("### Processing state")
 
 st.markdown(
-    "- **Data source:** synthetic event generator (`src/data_generator.py`), designed to be "
-    "swapped for anonymized real event data without changing downstream code.\n"
-    "- **Model state:** causal estimates and recommendations are recomputed on demand from the "
-    "current database contents — nothing is cached beyond the configured TTL.\n"
-    "- **Pipeline stages:** Event Data → Privacy/Minimization → Database → Processing → Journey "
-    "Reconstruction → Behavioral Analytics → Segmentation → Causal Inference → Intervention "
-    "Identification → What-If Simulation → Intervention Ranking → Explainable Recommendation → "
-    "this Dashboard.\n"
+    "- **Data source:** current events and sessions stored in the database. "
+    "The pipeline can process synthetic research data as well as anonymized "
+    "live behavioral events.\n"
+    "- **Privacy:** incoming identifiers are pseudonymized before analytics "
+    "processing, while downstream analysis operates on privacy-preserving data.\n"
+    "- **Model state:** causal estimates and recommendations can be recomputed "
+    "on demand from the current database contents.\n"
+    "- **Pipeline stages:** Event Data → Privacy/Minimization → Database → "
+    "Processing → Journey Reconstruction → Behavioral Analytics → Segmentation → "
+    "Causal Inference → Intervention Identification → What-If Simulation → "
+    "Intervention Ranking → Explainable Recommendation → Dashboard.\n"
 )
 
 

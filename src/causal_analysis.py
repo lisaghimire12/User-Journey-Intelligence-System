@@ -78,6 +78,17 @@ def estimate_effect(
     treatment_label = treatment_label or treatment_raw
 
     required_cols = [treatment_raw, outcome] + confounders
+    missing_cols = [c for c in required_cols if c not in df.columns]
+    if missing_cols:
+        return CausalResult(
+            status="insufficient_evidence",
+            treatment=treatment_label,
+            outcome=outcome,
+            confounders=confounders,
+            message="Insufficient evidence for reliable causal estimation "
+                    f"(missing required column(s): {', '.join(missing_cols)}).",
+        )
+
     data = df.dropna(subset=[c for c in required_cols if c in df.columns]).copy()
 
     if data.empty or len(data) < MIN_SAMPLE_SIZE:
