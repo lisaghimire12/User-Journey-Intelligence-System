@@ -49,16 +49,19 @@ Event Data -> Privacy / Data Minimization -> PostgreSQL -> Data Processing
 ```
 
 ```
-user_journey_intelligence/
+.
 ├── app.py                     # Streamlit entry point / navigation
 ├── pages/                     # One file per dashboard page
 ├── src/                       # All non-UI logic (data, analytics, causal, sim)
 ├── sql/                       # PostgreSQL schema + optional seed
 ├── scripts/                   # init / generate / pipeline / analysis runners
 ├── tests/                     # pytest suite
-├── data/sample/                # (empty by default) local artifact folder
-├── .env.example
-└── requirements.txt
+├── data/                      # sample + generated local data
+├── .env.example               # local environment template
+├── requirements.txt
+├── README.md
+├── LICENSE
+└── .venv/                     # local virtual environment (optional)
 ```
 
 ## Technology stack
@@ -78,9 +81,20 @@ user_journey_intelligence/
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
+
+# macOS / Linux
+source .venv/bin/activate
+
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
+
 pip install -r requirements.txt
+
+# macOS / Linux
 cp .env.example .env
+
+# Windows PowerShell
+Copy-Item .env.example .env
 ```
 
 ### PostgreSQL setup (recommended)
