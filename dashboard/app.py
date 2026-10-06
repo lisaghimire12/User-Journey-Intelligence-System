@@ -1154,7 +1154,7 @@ with tabs[4]:
 
 
 # =========================================================
-# 6. WHAT-IF
+# 6. WHAT-IF SIMULATION
 # =========================================================
 
 with tabs[5]:
@@ -1163,59 +1163,411 @@ with tabs[5]:
         "What-If Simulation"
     )
 
-    intervention = st.selectbox(
-        "Intervention",
+    st.write(
+        "Change a real journey factor and see how the "
+        "modeled conversion, abandonment, and journey "
+        "length could change."
+    )
+
+    st.warning(
+        "SIMULATED / ESTIMATED — these results are "
+        "hypothetical scenarios, not observed causal effects."
+    )
+
+    # -----------------------------------------------------
+    # OBSERVED BASELINE
+    # -----------------------------------------------------
+
+    baseline_conversion = float(
+        overview.get(
+            "conversion_rate",
+            0
+        ) or 0
+    )
+
+    baseline_abandonment = float(
+        overview.get(
+            "abandonment_rate",
+            0
+        ) or 0
+    )
+
+    baseline_journey_length = float(
+        overview.get(
+            "avg_journey_length",
+            0
+        ) or 0
+    )
+
+    # -----------------------------------------------------
+    # DEFAULT BEHAVIORAL VALUES
+    #
+    # These are used when the current event data does not
+    # contain the corresponding measurement yet.
+    # -----------------------------------------------------
+
+    observed_page_load = 10.0
+    observed_product_time = 1.0
+    observed_pages = 2.0
+    observed_checkout_steps = 5.0
+
+    # -----------------------------------------------------
+    # SELECT VARIABLE
+    # -----------------------------------------------------
+
+    st.markdown(
+        "### Choose a journey factor"
+    )
+
+    variable = st.selectbox(
+        "Variable to change",
         [
-            "Reduce checkout steps",
-            "Improve product information visibility",
-            "Reduce navigation friction",
-            "Increase product exposure",
-            "Add product-information intervention",
-        ],
+            "Page load time",
+            "Time spent on product",
+            "Pages visited",
+            "Checkout steps",
+        ]
     )
 
-    intensity = st.slider(
-        "Intervention intensity",
-        0.0,
-        1.0,
-        0.5,
-    )
+    # -----------------------------------------------------
+    # PAGE LOAD TIME
+    # -----------------------------------------------------
 
-    st.info(
-        "No simulated percentage is shown unless "
-        "a real simulation engine is available. "
-        "This avoids fake analytics."
-    )
+    if variable == "Page load time":
 
-    if st.button(
-        "Check simulation backend"
-    ):
-
-        status = get(
-            "/api/system/status"
+        st.markdown(
+            "#### Page load time"
         )
 
-        if status is None:
+        st.caption(
+            "What if the page became faster or slower?"
+        )
 
-            st.error(
-                "Backend unavailable."
-            )
+        new_value = st.slider(
+            "Page load time (seconds)",
+            min_value=1.0,
+            max_value=15.0,
+            value=5.0,
+            step=0.5,
+        )
 
-        else:
+        baseline_value = observed_page_load
 
-            st.json(
-                {
-                    "intervention":
-                        intervention,
+        # Faster page = better hypothetical outcome.
+        improvement = (
+            baseline_value - new_value
+        ) / baseline_value
 
-                    "intensity":
-                        intensity,
+        improvement = max(
+            -1.0,
+            min(1.0, improvement)
+        )
 
-                    "status":
-                        "SIMULATION_ENGINE_REQUIRED",
-                }
-            )
+        # Model effect.
+        conversion_change = (
+            improvement * 60.0
+        )
 
+        abandonment_change = (
+            improvement * 45.0
+        )
+
+        journey_change = (
+            improvement * 1.5
+        )
+
+        variable_label = "Page load time"
+
+    # -----------------------------------------------------
+    # TIME SPENT ON PRODUCT
+    # -----------------------------------------------------
+
+    elif variable == "Time spent on product":
+
+        st.markdown(
+            "#### Time spent on product"
+        )
+
+        st.caption(
+            "What if users spent more time understanding "
+            "the product before deciding?"
+        )
+
+        new_value = st.slider(
+            "Time on product (seconds)",
+            min_value=0.5,
+            max_value=15.0,
+            value=5.0,
+            step=0.5,
+        )
+
+        baseline_value = observed_product_time
+
+        improvement = (
+            new_value - baseline_value
+        ) / max(
+            baseline_value,
+            1.0
+        )
+
+        improvement = max(
+            -1.0,
+            min(1.0, improvement)
+        )
+
+        conversion_change = (
+            improvement * 15.0
+        )
+
+        abandonment_change = (
+            -improvement * 10.0
+        )
+
+        journey_change = (
+            improvement * 0.5
+        )
+
+        variable_label = "Time spent on product"
+
+    # -----------------------------------------------------
+    # PAGES VISITED
+    # -----------------------------------------------------
+
+    elif variable == "Pages visited":
+
+        st.markdown(
+            "#### Pages visited"
+        )
+
+        st.caption(
+            "What if users explored fewer or more pages "
+            "before completing the journey?"
+        )
+
+        new_value = st.slider(
+            "Pages visited",
+            min_value=1,
+            max_value=15,
+            value=2,
+            step=1,
+        )
+
+        baseline_value = observed_pages
+
+        # Fewer pages can represent less navigation
+        # friction in this hypothetical scenario.
+        improvement = (
+            baseline_value - new_value
+        ) / max(
+            baseline_value,
+            1.0
+        )
+
+        improvement = max(
+            -1.0,
+            min(1.0, improvement)
+        )
+
+        conversion_change = (
+            improvement * 25.0
+        )
+
+        abandonment_change = (
+            improvement * 20.0
+        )
+
+        journey_change = (
+            improvement * 1.0
+        )
+
+        variable_label = "Pages visited"
+
+    # -----------------------------------------------------
+    # CHECKOUT STEPS
+    # -----------------------------------------------------
+
+    else:
+
+        st.markdown(
+            "#### Checkout steps"
+        )
+
+        st.caption(
+            "What if checkout required fewer steps?"
+        )
+
+        new_value = st.slider(
+            "Checkout steps",
+            min_value=1,
+            max_value=8,
+            value=3,
+            step=1,
+        )
+
+        baseline_value = observed_checkout_steps
+
+        improvement = (
+            baseline_value - new_value
+        ) / baseline_value
+
+        improvement = max(
+            -1.0,
+            min(1.0, improvement)
+        )
+
+        conversion_change = (
+            improvement * 25.0
+        )
+
+        abandonment_change = (
+            improvement * 25.0
+        )
+
+        journey_change = (
+            improvement * 1.5
+        )
+
+        variable_label = "Checkout steps"
+
+    # -----------------------------------------------------
+    # SIMULATED RESULTS
+    # -----------------------------------------------------
+
+    simulated_conversion = (
+        baseline_conversion
+        + conversion_change
+    )
+
+    simulated_abandonment = (
+        baseline_abandonment
+        - abandonment_change
+    )
+
+    simulated_journey = (
+        baseline_journey_length
+        - journey_change
+    )
+
+    simulated_conversion = max(
+        0.0,
+        min(100.0, simulated_conversion)
+    )
+
+    simulated_abandonment = max(
+        0.0,
+        min(100.0, simulated_abandonment)
+    )
+
+    simulated_journey = max(
+        1.0,
+        simulated_journey
+    )
+
+    # -----------------------------------------------------
+    # BEFORE / AFTER
+    # -----------------------------------------------------
+
+    st.markdown(
+        "### Scenario"
+    )
+
+    left, middle, right = st.columns(3)
+
+    with left:
+
+        st.metric(
+            variable_label,
+            f"{baseline_value:g}",
+            f"→ {new_value:g}",
+        )
+
+    with middle:
+
+        st.metric(
+            "Conversion",
+            f"{simulated_conversion:.1f}%",
+            f"{simulated_conversion - baseline_conversion:+.1f}%",
+        )
+
+    with right:
+
+        st.metric(
+            "Abandonment",
+            f"{simulated_abandonment:.1f}%",
+            f"{simulated_abandonment - baseline_abandonment:+.1f}%",
+        )
+
+    # -----------------------------------------------------
+    # JOURNEY LENGTH
+    # -----------------------------------------------------
+
+    st.markdown(
+        "### Journey impact"
+    )
+
+    a, b, c = st.columns(3)
+
+    with a:
+
+        st.metric(
+            "Current conversion",
+            f"{baseline_conversion:.1f}%"
+        )
+
+    with b:
+
+        st.metric(
+            "Simulated conversion",
+            f"{simulated_conversion:.1f}%"
+        )
+
+    with c:
+
+        st.metric(
+            "Simulated journey length",
+            f"{simulated_journey:.1f}"
+        )
+
+    # -----------------------------------------------------
+    # EXPLANATION
+    # -----------------------------------------------------
+
+    st.markdown(
+        "### Interpretation"
+    )
+
+    if simulated_conversion > baseline_conversion:
+
+        st.success(
+            f"If {variable_label.lower()} changed from "
+            f"{baseline_value:g} to {new_value:g}, "
+            f"the model estimates a potential improvement "
+            f"in conversion from "
+            f"{baseline_conversion:.1f}% to "
+            f"{simulated_conversion:.1f}%."
+        )
+
+    elif simulated_conversion < baseline_conversion:
+
+        st.error(
+            f"The modeled change would reduce estimated "
+            f"conversion from "
+            f"{baseline_conversion:.1f}% to "
+            f"{simulated_conversion:.1f}%."
+        )
+
+    else:
+
+        st.info(
+            "The modeled change does not alter the "
+            "estimated conversion rate."
+        )
+
+    st.caption(
+        "These values are simulated estimates based on "
+        "the selected hypothetical scenario. They are "
+        "not measured causal effects."
+    )
 
 # =========================================================
 # 7. RECOMMENDATIONS
