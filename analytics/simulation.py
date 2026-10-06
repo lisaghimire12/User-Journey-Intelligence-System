@@ -1,0 +1,3 @@
+def simulate(conv,abandonment,length,intervention,intensity):
+    e={"Reduce checkout steps":(.10,-.10,-1),"Improve product information visibility":(.05,-.04,-.3),"Reduce navigation friction":(.06,-.05,-.5),"Increase product exposure":(.03,-.02,.1),"Add product-information intervention":(.04,-.03,-.2)}
+    a,b,c=e[intervention];return {"intervention":intervention,"baseline_conversion":conv,"simulated_conversion":min(100,conv+a*intensity*100),"baseline_abandonment":abandonment,"simulated_abandonment":max(0,abandonment+b*intensity*100),"baseline_journey_length":length,"simulated_journey_length":max(1,length+c*intensity),"confidence":"Medium","status":"SIMULATED"}

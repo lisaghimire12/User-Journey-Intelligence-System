@@ -1,0 +1,284 @@
+[
+  {
+    "id": "clothing-01",
+    "name": "Oversized Cotton T-Shirt",
+    "brand": "NOVA FORM",
+    "category": "Clothing",
+    "price": 1899,
+    "description": "A relaxed heavyweight cotton tee with a clean silhouette for everyday wear.",
+    "rating": 4.6,
+    "stock": 48,
+    "attributes": {
+      "material": "100% cotton",
+      "fabric_composition": "100% Cotton",
+      "fit": "Oversized",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "care_instructions": "Machine wash cold",
+      "stretch": "Low",
+      "weight": "240g"
+    },
+    "images": []
+  },
+  {
+    "id": "clothing-02",
+    "name": "Everyday Denim Jeans",
+    "brand": "NOVA FORM",
+    "category": "Clothing",
+    "price": 3299,
+    "description": "Straight-leg denim designed for everyday styling with a structured finish.",
+    "rating": 4.5,
+    "stock": 31,
+    "attributes": {
+      "material": "Denim",
+      "fabric_composition": "98% Cotton, 2% Elastane",
+      "fit": "Straight",
+      "sizes": [
+        "28",
+        "30",
+        "32",
+        "34",
+        "36"
+      ],
+      "care_instructions": "Wash inside out",
+      "stretch": "Moderate",
+      "weight": "620g"
+    },
+    "images": []
+  },
+  {
+    "id": "clothing-03",
+    "name": "Lightweight Linen Shirt",
+    "brand": "ATELIER NORTH",
+    "category": "Clothing",
+    "price": 2799,
+    "description": "An airy linen-blend shirt with a relaxed profile for warm-weather dressing.",
+    "rating": 4.4,
+    "stock": 25,
+    "attributes": {
+      "material": "Linen blend",
+      "fabric_composition": "55% Linen, 45% Cotton",
+      "fit": "Relaxed",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "care_instructions": "Gentle wash",
+      "stretch": "None",
+      "weight": "210g"
+    },
+    "images": []
+  },
+  {
+    "id": "shoes-01",
+    "name": "Cloud Runner Sneakers",
+    "brand": "AERON",
+    "category": "Shoes",
+    "price": 4999,
+    "description": "Lightweight running shoes designed for everyday running and movement.",
+    "rating": 4.7,
+    "stock": 42,
+    "attributes": {
+      "material": "Mesh upper + rubber outsole",
+      "fit": "Regular",
+      "sole": "Rubber",
+      "weight": "280g",
+      "intended_use": "Everyday running",
+      "cushioning": "Responsive foam",
+      "water_resistance": "Not specified",
+      "sizes": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    "images": []
+  },
+  {
+    "id": "shoes-02",
+    "name": "Everyday Casual Sneakers",
+    "brand": "AERON",
+    "category": "Shoes",
+    "price": 3599,
+    "description": "Versatile low-profile sneakers built for everyday casual use.",
+    "rating": 4.5,
+    "stock": 37,
+    "attributes": {
+      "material": "Synthetic leather",
+      "fit": "Regular",
+      "sole": "Rubber",
+      "weight": "340g",
+      "intended_use": "Casual",
+      "cushioning": "Standard",
+      "sizes": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    "images": []
+  },
+  {
+    "id": "shoes-03",
+    "name": "Minimal Leather Sneakers",
+    "brand": "MONUMENT",
+    "category": "Shoes",
+    "price": 6499,
+    "description": "Clean leather sneakers with a minimalist profile and understated branding.",
+    "rating": 4.6,
+    "stock": 19,
+    "attributes": {
+      "material": "Leather upper",
+      "fit": "Regular",
+      "sole": "Rubber",
+      "weight": "390g",
+      "intended_use": "Lifestyle",
+      "cushioning": "Low-profile",
+      "sizes": [
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    "images": []
+  },
+  {
+    "id": "food-01",
+    "name": "Whey Protein",
+    "brand": "FORM LABS",
+    "category": "Food / Supplements",
+    "price": 2899,
+    "description": "Chocolate-flavoured whey protein powder with a simple nutritional profile.",
+    "rating": 4.5,
+    "stock": 55,
+    "attributes": {
+      "serving_size": "30g",
+      "calories": "120 kcal",
+      "protein": "24g",
+      "carbohydrates": "3g",
+      "sugar": "2g",
+      "fat": "2g",
+      "ingredients": "Whey protein concentrate, cocoa, flavouring",
+      "allergens": "Milk",
+      "sweeteners": "Sucralose"
+    },
+    "images": []
+  },
+  {
+    "id": "food-02",
+    "name": "Protein Bar",
+    "brand": "FORM LABS",
+    "category": "Food / Supplements",
+    "price": 1299,
+    "description": "Convenient protein bars with chocolate and nut flavours.",
+    "rating": 4.3,
+    "stock": 72,
+    "attributes": {
+      "serving_size": "50g",
+      "calories": "190 kcal",
+      "protein": "15g",
+      "carbohydrates": "18g",
+      "sugar": "7g",
+      "fat": "7g",
+      "ingredients": "Milk protein, oats, nuts, cocoa",
+      "allergens": "Milk, nuts"
+    },
+    "images": []
+  },
+  {
+    "id": "food-03",
+    "name": "Almond Granola",
+    "brand": "MORNING EDIT",
+    "category": "Food / Supplements",
+    "price": 799,
+    "description": "Crunchy oat granola with almonds and lightly sweetened clusters.",
+    "rating": 4.4,
+    "stock": 66,
+    "attributes": {
+      "serving_size": "45g",
+      "calories": "210 kcal",
+      "protein": "6g",
+      "carbohydrates": "30g",
+      "sugar": "8g",
+      "fat": "8g",
+      "ingredients": "Oats, almonds, seeds, honey",
+      "allergens": "Nuts"
+    },
+    "images": []
+  },
+  {
+    "id": "electronics-01",
+    "name": "Wireless Headphones",
+    "brand": "SONORA",
+    "category": "Electronics",
+    "price": 7999,
+    "description": "Over-ear wireless headphones with active noise cancellation and USB-C charging.",
+    "rating": 4.7,
+    "stock": 27,
+    "attributes": {
+      "processor": "Integrated audio chipset",
+      "storage": "Not applicable",
+      "battery": "Up to 30 hours listed",
+      "display": "None",
+      "ports": "USB-C",
+      "connectivity": "Bluetooth 5.3",
+      "compatibility": "Bluetooth-enabled devices",
+      "warranty": "1 year"
+    },
+    "images": []
+  },
+  {
+    "id": "electronics-02",
+    "name": "Smartwatch",
+    "brand": "PULSE",
+    "category": "Electronics",
+    "price": 6999,
+    "description": "A compact smartwatch with a bright display and everyday activity features.",
+    "rating": 4.4,
+    "stock": 33,
+    "attributes": {
+      "processor": "Dual-core wearable chipset",
+      "storage": "4GB",
+      "battery": "Up to 7 days listed",
+      "display": "1.7-inch AMOLED",
+      "ports": "Magnetic charging",
+      "connectivity": "Bluetooth 5.2",
+      "compatibility": "Android and iOS",
+      "warranty": "1 year"
+    },
+    "images": []
+  },
+  {
+    "id": "electronics-03",
+    "name": "AeroBook Laptop",
+    "brand": "NORTHBYTE",
+    "category": "Electronics",
+    "price": 64999,
+    "description": "A thin productivity laptop designed for study, office work and everyday computing.",
+    "rating": 4.6,
+    "stock": 14,
+    "attributes": {
+      "processor": "Intel Core i5 class processor",
+      "RAM": "16GB",
+      "storage": "512GB SSD",
+      "battery": "Up to 12 hours listed",
+      "display": "14-inch Full HD",
+      "ports": "USB-C, USB-A, HDMI",
+      "connectivity": "Wi-Fi 6, Bluetooth",
+      "compatibility": "Windows applications",
+      "warranty": "2 years"
+    },
+    "images": []
+  }
+]

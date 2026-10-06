@@ -1,0 +1,1129 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap');
+
+:root {
+    --paper: #f7f6f2;
+    --ink: #171715;
+    --muted: #77746d;
+    --line: #ddd9d0;
+    --soft: #e8e4db;
+    --accent: #d94b45;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+
+    font-family: "DM Sans", Arial, sans-serif;
+
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button,
+input {
+    font-family: inherit;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header {
+    height: 76px;
+
+    padding: 0 7vw;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid var(--line);
+
+    background: var(--paper);
+
+    position: sticky;
+    top: 0;
+
+    z-index: 20;
+}
+
+.logo {
+    font-size: 14px;
+    font-weight: 600;
+
+    letter-spacing: 0.14em;
+
+    text-transform: uppercase;
+}
+
+nav {
+    display: flex;
+
+    gap: 30px;
+
+    font-size: 13px;
+}
+
+nav a {
+    transition: opacity 0.2s ease;
+}
+
+nav a:hover {
+    opacity: 0.5;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer {
+    margin-top: 100px;
+
+    padding: 35px 7vw;
+
+    border-top: 1px solid var(--line);
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    letter-spacing: 0.05em;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero {
+    min-height: 650px;
+
+    padding: 90px 7vw;
+
+    display: grid;
+
+    grid-template-columns: 1fr 0.75fr;
+
+    gap: 80px;
+
+    align-items: center;
+
+    border-bottom: 1px solid var(--line);
+}
+
+.hero small,
+.section > small,
+.page > small,
+.detail small,
+.success > small {
+    display: block;
+
+    margin-bottom: 18px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    letter-spacing: 0.18em;
+
+    text-transform: uppercase;
+}
+
+.hero h1 {
+    margin: 0;
+
+    max-width: 760px;
+
+    font-family: "Playfair Display", Georgia, serif;
+
+    font-size: clamp(50px, 6vw, 90px);
+
+    font-weight: 400;
+
+    line-height: 0.98;
+
+    letter-spacing: -0.04em;
+}
+
+.hero h1 i {
+    font-weight: 400;
+}
+
+.hero p {
+    max-width: 530px;
+
+    margin: 35px 0;
+
+    color: var(--muted);
+
+    font-size: 17px;
+
+    line-height: 1.8;
+}
+
+.heroart {
+    min-height: 500px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ddd8ce,
+            #c8c1b4
+        );
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.heroart::before {
+    content: "";
+
+    position: absolute;
+
+    width: 340px;
+    height: 340px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(0,0,0,0.2);
+
+    box-shadow:
+        0 0 0 45px rgba(0,0,0,0.025),
+        0 0 0 90px rgba(0,0,0,0.025);
+}
+
+.heroart b {
+    position: relative;
+
+    z-index: 2;
+
+    font-family: "Playfair Display", Georgia, serif;
+
+    font-size: 48px;
+
+    font-weight: 400;
+
+    line-height: 0.95;
+
+    text-align: center;
+
+    letter-spacing: -0.04em;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 48px;
+
+    padding: 0 25px;
+
+    border: 1px solid var(--ink);
+
+    background: transparent;
+
+    color: var(--ink);
+
+    cursor: pointer;
+
+    font-size: 13px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn.dark {
+    background: var(--ink);
+
+    color: white;
+}
+
+.btn.dark:hover {
+    background: #33332f;
+}
+
+.btn.full {
+    width: 100%;
+
+    margin-top: 12px;
+}
+
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+.section {
+    padding: 100px 7vw;
+}
+
+.section h2 {
+    margin: 0 0 45px;
+
+    font-family: "Playfair Display", Georgia, serif;
+
+    font-size: 48px;
+
+    font-weight: 400;
+
+    letter-spacing: -0.03em;
+}
+
+
+/* =========================================================
+   PRODUCT GRID
+========================================================= */
+
+.grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 24px;
+}
+
+
+/* =========================================================
+   PRODUCT CARD
+========================================================= */
+
+.card {
+    display: block;
+
+    min-width: 0;
+
+    cursor: pointer;
+}
+
+.visual {
+    height: 430px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    background: #dedbd3;
+}
+
+.visual img {
+    width: 100%;
+
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    transition:
+        transform 0.5s ease;
+}
+
+.card:hover .visual img {
+    transform: scale(1.04);
+}
+
+.visual small {
+    position: absolute;
+
+    top: 16px;
+
+    left: 16px;
+
+    z-index: 2;
+
+    padding: 6px 10px;
+
+    background: rgba(
+        247,
+        246,
+        242,
+        0.9
+    );
+
+    color: var(--ink);
+
+    font-size: 10px;
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+}
+
+.cardrow {
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding-top: 16px;
+}
+
+.cardrow b {
+    display: block;
+
+    font-size: 14px;
+
+    font-weight: 500;
+}
+
+.cardrow small {
+    display: block;
+
+    margin-top: 3px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+.cardrow > span {
+    white-space: nowrap;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.page {
+    padding: 90px 7vw;
+
+    min-height: 700px;
+}
+
+.page > h1 {
+    margin: 0 0 50px;
+
+    font-family: "Playfair Display", Georgia, serif;
+
+    font-size: clamp(
+        50px,
+        6vw,
+        80px
+    );
+
+    font-weight: 400;
+
+    line-height: 1;
+
+    letter-spacing: -0.04em;
+}
+
+.page.narrow {
+    max-width: 850px;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.search {
+    width: 100%;
+
+    margin-bottom: 55px;
+
+    padding: 18px 0;
+
+    border: 0;
+
+    border-bottom: 1px solid var(--ink);
+
+    outline: none;
+
+    background: transparent;
+
+    font-size: 17px;
+
+    color: var(--ink);
+}
+
+.search::placeholder {
+    color: #8a877f;
+}
+
+
+/* =========================================================
+   PRODUCT DETAIL
+========================================================= */
+
+.detail {
+    display: grid;
+
+    grid-template-columns:
+        1.1fr
+        0.9fr;
+
+    min-height: 760px;
+}
+
+.bigvisual {
+    min-height: 760px;
+
+    overflow: hidden;
+
+    background: #dedbd3;
+}
+
+.bigvisual img {
+    width: 100%;
+
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+.copy {
+    padding: 90px 7vw;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+}
+
+.copy h1 {
+    margin: 0 0 20px;
+
+    font-family: "Playfair Display", Georgia, serif;
+
+    font-size: clamp(
+        45px,
+        5vw,
+        72px
+    );
+
+    font-weight: 400;
+
+    line-height: 1;
+
+    letter-spacing: -0.04em;
+}
+
+.copy h3 {
+    margin: 0 0 30px;
+
+    font-size: 18px;
+
+    font-weight: 500;
+}
+
+.copy > p {
+    max-width: 600px;
+
+    color: var(--muted);
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   PRODUCT ATTRIBUTES
+========================================================= */
+
+.attrs {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    margin: 35px 0;
+
+    border-top: 1px solid var(--line);
+}
+
+.attrs div {
+    padding: 15px 0;
+
+    border-bottom: 1px solid var(--line);
+}
+
+.attrs div:nth-child(odd) {
+    padding-right: 20px;
+}
+
+.attrs div:nth-child(even) {
+    padding-left: 20px;
+
+    border-left: 1px solid var(--line);
+}
+
+.attrs small {
+    margin-bottom: 3px;
+
+    font-size: 10px;
+}
+
+.attrs b {
+    display: block;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    text-transform: capitalize;
+}
+
+
+/* =========================================================
+   SIZES
+========================================================= */
+
+.sizes {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin: 12px 0 25px;
+}
+
+.sizes button {
+    min-width: 48px;
+
+    height: 42px;
+
+    border: 1px solid var(--line);
+
+    background: transparent;
+
+    cursor: pointer;
+}
+
+.sizes button:hover,
+.sizes button.selected {
+    background: var(--ink);
+
+    color: white;
+
+    border-color: var(--ink);
+}
+
+
+/* =========================================================
+   OVERLAY / PRODUCT INTELLIGENCE
+========================================================= */
+
+.overlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 100;
+
+    background: rgba(
+        0,
+        0,
+        0,
+        0.45
+    );
+
+    display: flex;
+
+    justify-content: flex-end;
+}
+
+.insight {
+    width: min(
+        720px,
+        100%
+    );
+
+    height: 100vh;
+
+    overflow-y: auto;
+
+    padding: 65px 55px;
+
+    background: var(--paper);
+
+    box-shadow:
+        -15px 0 50px
+        rgba(0,0,0,0.12);
+}
+
+.x {
+    position: absolute;
+
+    top: 22px;
+
+    right: 25px;
+
+    width: 42px;
+
+    height: 42px;
+
+    border: 1px solid var(--line);
+
+    background: var(--paper);
+
+    cursor: pointer;
+
+    font-size: 25px;
+
+    line-height: 1;
+}
+
+.insight > small {
+    color: var(--accent);
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.15em;
+}
+
+.insight h2 {
+    margin: 15px 0;
+
+    font-family: "Playfair Display", Georgia, serif;
+
+    font-size: 48px;
+
+    font-weight: 400;
+
+    line-height: 1.05;
+}
+
+.muted {
+    color: var(--muted);
+
+    line-height: 1.7;
+}
+
+.insight section {
+    margin-top: 50px;
+
+    padding-top: 30px;
+
+    border-top: 1px solid var(--line);
+}
+
+.insight label {
+    display: block;
+
+    margin-bottom: 20px;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.16em;
+
+    color: var(--muted);
+}
+
+
+/* =========================================================
+   PRODUCT FACTS
+========================================================= */
+
+.fact {
+    padding: 22px 0;
+
+    border-bottom: 1px solid var(--line);
+}
+
+.fact b {
+    display: block;
+
+    font-size: 16px;
+}
+
+.fact > span {
+    display: block;
+
+    margin: 5px 0 15px;
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: 25px;
+}
+
+.fact p {
+    color: #555;
+
+    line-height: 1.65;
+}
+
+.fact > small {
+    color: #8a877f;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   REAL-WORLD COMPARISON
+========================================================= */
+
+.comparison {
+    margin: 16px 0;
+
+    padding: 23px;
+
+    background: #ebe7de;
+
+    border-left: 3px solid var(--ink);
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.comparison small {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 10px;
+
+    letter-spacing: 0.12em;
+
+    text-transform: uppercase;
+}
+
+.comparison b {
+    font-size: 15px;
+}
+
+.comparison strong {
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: 25px;
+
+    font-weight: 400;
+
+    line-height: 1.2;
+}
+
+.comparison span {
+    color: #666;
+
+    font-size: 12px;
+
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   TRADEOFF
+========================================================= */
+
+.tradeoff {
+    padding: 20px 0;
+
+    border-bottom: 1px solid var(--line);
+}
+
+.tradeoff b {
+    font-size: 11px;
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+}
+
+.tradeoff p {
+    margin-top: 5px;
+
+    color: #555;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   MISSING INFORMATION
+========================================================= */
+
+.missing {
+    margin: 12px 0;
+
+    padding: 20px 22px;
+
+    background: #ebe7de;
+
+    border-left: 2px solid #77746d;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.missing b {
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.missing span {
+    color: #66625b;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   LIST
+========================================================= */
+
+.insight ul {
+    padding-left: 20px;
+
+    color: #555;
+}
+
+.insight li {
+    margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading {
+    padding: 70px 0;
+
+    color: var(--muted);
+}
+
+
+/* =========================================================
+   CART
+========================================================= */
+
+.cart {
+    max-width: 700px;
+
+    margin-bottom: 35px;
+
+    padding: 25px 0;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    border-top: 1px solid var(--line);
+
+    border-bottom: 1px solid var(--line);
+}
+
+
+/* =========================================================
+   CHECKOUT
+========================================================= */
+
+.form {
+    max-width: 600px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 15px;
+}
+
+.form input {
+    padding: 17px;
+
+    border: 1px solid var(--line);
+
+    background: white;
+
+    outline: none;
+
+    font-size: 14px;
+}
+
+.form input:focus {
+    border-color: var(--ink);
+}
+
+
+/* =========================================================
+   SUCCESS
+========================================================= */
+
+.success {
+    min-height: 700px;
+
+    padding: 140px 7vw;
+
+    text-align: center;
+}
+
+.success h1 {
+    margin: 0;
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: 90px;
+
+    font-weight: 400;
+
+    line-height: 1;
+}
+
+.success p {
+    color: var(--muted);
+
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .hero {
+        grid-template-columns: 1fr;
+    }
+
+    .heroart {
+        min-height: 400px;
+    }
+
+    .detail {
+        grid-template-columns: 1fr;
+    }
+
+    .bigvisual {
+        min-height: 600px;
+    }
+}
+
+
+@media (max-width: 650px) {
+
+    header {
+        padding: 0 20px;
+    }
+
+    nav {
+        gap: 12px;
+
+        font-size: 11px;
+    }
+
+    .hero,
+    .section,
+    .page {
+        padding-left: 20px;
+
+        padding-right: 20px;
+    }
+
+    .hero {
+        padding-top: 60px;
+
+        padding-bottom: 60px;
+    }
+
+    .hero h1 {
+        font-size: 52px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .visual {
+        height: 420px;
+    }
+
+    .copy {
+        padding: 60px 20px;
+    }
+
+    .insight {
+        padding: 55px 25px;
+    }
+
+    .insight h2 {
+        font-size: 40px;
+    }
+
+    .attrs {
+        grid-template-columns: 1fr;
+    }
+
+    .attrs div:nth-child(even) {
+        padding-left: 0;
+
+        border-left: 0;
+    }
+
+    .bigvisual {
+        min-height: 500px;
+    }
+}

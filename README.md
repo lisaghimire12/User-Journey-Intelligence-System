@@ -45,3 +45,28 @@ Dashboard: http://localhost:8501
 SQLite is the zero-setup development default. Change DATABASE_URL to PostgreSQL when desired.
 
 The AI feature has a deterministic evidence-grounded local fallback so the project works without an API key. An OpenAI key can be added later without exposing it to the browser.
+
+
+# RUN:
+cd path\to\privacy-aware-user-journey
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+copy .env.example .env
+python scripts\seed_data.py
+
+
+# T1:
+.\venv\Scripts\Activate.ps1
+uvicorn backend.app.main:app --reload
+
+# T2:
+cd frontend
+npm run dev
+http://localhost:5173
+
+# T3:
+cd ..
+privacy-aware-user-journey
+.\venv\Scripts\Activate.ps1
+streamlit run dashboard\app.py
+Local URL: http://localhost:8501
