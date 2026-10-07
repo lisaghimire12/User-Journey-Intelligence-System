@@ -1,101 +1,49 @@
 # Privacy-Aware User Journey Intelligence System for E-Commerce
 
-A complete final-year project that combines **privacy-aware e-commerce analytics** with an **AI-based consumer product decision interpreter**.
+A full-stack e-commerce intelligence platform that combines **privacy-aware user journey analytics** with an **AI-powered consumer product decision interpreter**.
 
-The system understands both sides of an e-commerce experience:
+The system analyzes how users browse, navigate, abandon, and purchase while also helping consumers understand what product specifications actually mean through **✦ Know Before You Buy**.
 
-- **Business side:** understand how users browse, compare, abandon, and purchase.
-- **Consumer side:** help users understand what product specifications actually mean before buying.
+## Tech Stack
 
-The project includes a premium React/Vite dummy e-commerce storefront, a FastAPI analytics backend, privacy-aware event tracking, journey reconstruction, behavioral analytics, causal analysis, simulation, explainable recommendations, a Streamlit intelligence dashboard, and a local AI-powered **✦ Know Before You Buy** product interpreter.
+- **Frontend:** React, Vite, JavaScript, CSS
+- **Backend:** Python, FastAPI, SQLAlchemy, Pydantic
+- **Database:** SQLite
+- **Analytics Dashboard:** Streamlit, Pandas, Plotly
+- **AI:** Ollama, Llama 3.2 (`llama3.2:latest`)
+- **Privacy:** Anonymous session tracking, data minimization, HMAC-SHA256 pseudonymization
 
----
+## Key Features
 
-## Features
+- 🛍️ Responsive e-commerce storefront with search, products, cart, checkout and purchase flow
+- 🔐 Privacy-aware anonymous user journey tracking
+- 📊 Real-time event collection and journey reconstruction
+- 📈 Conversion, abandonment, behavioral segmentation and journey analytics
+- 🔎 Causal analysis and explainable recommendations
+- 🔮 What-If simulation for hypothetical journey improvements
+- ✦ **Know Before You Buy** AI product interpretation
+- 🤖 Local AI inference using **Ollama + Llama 3.2**
+- 🧠 AI-generated explanations, implications, trade-offs, considerations and missing information
+- 🛡️ Hallucination-aware, evidence-grounded product interpretation
 
-### E-Commerce Storefront
-
-- Premium React/Vite e-commerce interface
-- Product listing and product detail pages
-- Product search
-- Product categories
-- Product options such as size
-- Shopping cart
-- Checkout flow
-- Purchase flow
-- Responsive desktop, tablet, and mobile UI
-
-### Privacy-Aware User Journey Tracking
-
-The storefront records user interactions without collecting unnecessary personal information.
-
-Tracked events include:
-
-- `page_view`
-- `search`
-- `view_item`
-- `select_size`
-- `add_to_cart`
-- `view_cart`
-- `begin_checkout`
-- `purchase`
-- `product_insight_opened`
-- `product_insight_section_viewed`
-- `product_source_expanded`
-- `product_insight_closed`
-
-Anonymous user and session identifiers are used for journey reconstruction.
-
-Sensitive personal information such as:
-
-- passwords
-- payment information
-- email addresses
-- phone numbers
-- physical addresses
-
-is not required for the analytics system.
-
-User identifiers are designed to be privacy-aware and can be pseudonymized using **HMAC-SHA256**.
-
----
-
-## AI: ✦ Know Before You Buy
-
-The project includes an AI-powered consumer product decision interpreter.
-
-The feature is accessed from the product page through:
-
-> **✦ KNOW BEFORE YOU BUY**
-
-The AI receives the supplied product information and explains it in simple language.
-
-It can identify:
-
-- important product facts
-- what technical specifications mean
-- practical implications
-- meaningful relationships between attributes
-- meaningful trade-offs
-- considerations for the consumer
-- information that has not been provided
-- a concise evidence-grounded bottom line
-
-The system is designed to avoid simply repeating the product description.
-
-For example, if a product provides multiple related specifications, the AI can reason about their relationship rather than displaying unrelated explanations for each field.
-
-The AI does **not** use a fixed set of hard-coded rules such as:
+## Architecture
 
 ```text
-IF category == clothing:
-    explain fabric
+React/Vite Storefront
+        ↓
+FastAPI Backend
+   ↙           ↘
+Events       Product AI
+   ↓             ↓
+SQLite       Ollama
+   ↓        Llama 3.2
+   ↓
+Journey Analytics
+        ↓
+Streamlit Dashboard
 
-IF category == electronics:
-    explain RAM
-
-IF category == food:
-    explain protein
+Project Goal
+An e-commerce intelligence platform that understands both sides of the shopping experience — how customers behave and what customers are buying.
 
 # RUN:
 cd path\to\privacy-aware-user-journey
